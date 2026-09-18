@@ -1,0 +1,30 @@
+{
+  "name": "@rtw/core-engine",
+  "version": "1.0.0",
+  "description": "Core Transpiler and Gemini AI Engine for React to WordPress Conversion",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "node dist/index.js"
+  },
+  "keywords": [
+    "react",
+    "wordpress",
+    "gutenberg",
+    "fse",
+    "transpiler",
+    "gemini"
+  ],
+  "author": "RTW Core Team",
+  "license": "MIT",
+  "dependencies": {
+    "@google/genai": "^0.1.1",
+    "archiver": "^7.0.1"
+  },
+  "devDependencies": {
+    "@types/archiver": "^6.0.2",
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3"
+  }
+}

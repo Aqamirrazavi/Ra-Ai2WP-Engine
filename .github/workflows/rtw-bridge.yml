@@ -1,0 +1,54 @@
+name: RTW GitHub Bridge & WordPress Builder
+
+on:
+  push:
+    branches: [ main, master ]
+  repository_dispatch:
+    types: [ wp-bridge-convert ]
+  workflow_dispatch:
+    inputs:
+      project_name:
+        description: 'WordPress Theme / Plugin Name'
+        required: true
+        default: 'My React WP Suite'
+      output_type:
+        description: 'Target format (block-theme, classic-theme, plugin)'
+        required: true
+        default: 'block-theme'
+
+jobs:
+  transpile-and-package:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Runtime
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: './cli/package.json'
+
+      - name: Install CLI Dependencies
+        run: |
+          cd cli
+          npm install
+
+      - name: Execute RTW Transpiler
+        run: |
+          node cli/bin/rtw.js src/App.tsx --type ${{ github.event.inputs.output_type || 'block-theme' }} --name "${{ github.event.inputs.project_name || 'RTW Theme' }}" --out ./dist/wordpress
+
+      - name: Create WordPress Distribution ZIP
+        run: |
+          cd dist/wordpress
+          zip -r ../../rtw-wordpress-suite.zip ./*
+          cd ../..
+
+      - name: Upload WordPress Package Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: wordpress-suite-zip
+          path: rtw-wordpress-suite.zip
+          retention-days: 14

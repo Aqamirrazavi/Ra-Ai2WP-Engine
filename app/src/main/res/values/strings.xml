@@ -1,3 +1,8 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">RTW Converter</string>
+    <string name="app_tagline">React to WordPress AI Studio</string>
+    <string name="nav_dashboard">داشبورد (Dashboard)</string>
+    <string name="nav_converter">مبدل کد (Converter)</string>
+    <string name="nav_assets">تولید رسانه (Assets AI)</string>
+    <string name="nav_history">تاریخچه و پل (History &amp; Bridge)</string>
 </resources>

@@ -1,6 +1,6 @@
 {
-  "name": "",
-  "description": "",
+  "name": "RTW Converter",
+  "description": "React & AI to WordPress Tool & Theme Converter with High-Thinking architectural reasoning, low-latency code transpilation, image asset generation, and cloud synchronization.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

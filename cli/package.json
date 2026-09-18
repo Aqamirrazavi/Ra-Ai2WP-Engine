@@ -1,0 +1,17 @@
+{
+  "name": "rtw-convert",
+  "version": "1.0.0",
+  "description": "Command-line tool to convert React & Next.js projects to WordPress",
+  "bin": {
+    "rtw-convert": "./bin/rtw.js"
+  },
+  "scripts": {
+    "test": "node bin/rtw.js --help"
+  },
+  "keywords": ["cli", "react", "wordpress", "gutenberg", "theme"],
+  "author": "RTW Team",
+  "license": "MIT",
+  "dependencies": {
+    "archiver": "^7.0.1"
+  }
+}

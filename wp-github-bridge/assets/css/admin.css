@@ -1,0 +1,166 @@
+/* RTW Bridge Admin UI Stylesheet */
+.rtw-bridge-wrap {
+    margin: 20px 20px 0 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+.rtw-header {
+    background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+    color: #FFFFFF;
+    padding: 24px 30px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+    margin-bottom: 24px;
+}
+
+.rtw-header h1 {
+    color: #F8FAFC;
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0 0 6px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.rtw-header h1 .dashicons {
+    color: #38BDF8;
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+}
+
+.rtw-subtitle {
+    color: #94A3B8;
+    font-size: 13px;
+    margin: 0;
+}
+
+.rtw-badge span {
+    background: #0284C7;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+}
+
+.rtw-dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 24px;
+}
+
+@media (max-width: 1024px) {
+    .rtw-dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.rtw-card {
+    background: #FFFFFF;
+    border-radius: 10px;
+    border: 1px solid #E2E8F0;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.rtw-card h2 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0F172A;
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #F1F5F9;
+}
+
+.rtw-form-group {
+    margin-bottom: 16px;
+}
+
+.rtw-form-group label {
+    display: block;
+    font-weight: 600;
+    font-size: 13px;
+    color: #334155;
+    margin-bottom: 6px;
+}
+
+.rtw-card input.widefat,
+.rtw-card select.widefat,
+.rtw-card textarea.widefat {
+    border-radius: 6px;
+    border: 1px solid #CBD5E1;
+    padding: 8px 12px;
+    font-size: 13px;
+    transition: border-color 0.2s;
+}
+
+.rtw-card input.widefat:focus,
+.rtw-card select.widefat:focus,
+.rtw-card textarea.widefat:focus {
+    border-color: #0284C7;
+    box-shadow: 0 0 0 1px #0284C7;
+    outline: none;
+}
+
+.rtw-card .code-editor {
+    font-family: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+    font-size: 12px;
+    background: #0F172A;
+    color: #38BDF8;
+    direction: ltr;
+    text-align: left;
+}
+
+.rtw-action-card .button-hero {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 44px;
+    font-size: 14px;
+    font-weight: 700;
+    background: #0284C7;
+    border-color: #0284C7;
+    border-radius: 6px;
+    margin-top: 10px;
+}
+
+.rtw-action-card .button-hero:hover {
+    background: #0369A1;
+    border-color: #0369A1;
+}
+
+.rtw-status-box {
+    margin-top: 16px;
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.rtw-status-box.success {
+    background: #F0FDF4;
+    border: 1px solid #BBF7D0;
+    color: #166534;
+}
+
+.rtw-status-box.error {
+    background: #FEF2F2;
+    border: 1px solid #FECACA;
+    color: #991B1B;
+}
+
+.rtw-status-box.loading {
+    background: #F0F9FF;
+    border: 1px solid #BAE6FD;
+    color: #0369A1;
+}

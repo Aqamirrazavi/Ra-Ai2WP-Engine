@@ -1,0 +1,78 @@
+name: RTW Release Builder & Distribution
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g. 1.0.0)'
+        required: true
+        default: '1.0.0'
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  build-and-release:
+    name: Build & Package Artifacts
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Runtime
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: 'https://registry.npmjs.org'
+
+      # Step 1: Package WordPress Bridge Plugin
+      - name: Package wp-github-bridge WordPress Plugin
+        run: |
+          mkdir -p dist/plugins
+          zip -r dist/plugins/wp-github-bridge.zip wp-github-bridge/ -x "*.git*"
+          echo "✓ Packaged wp-github-bridge.zip for WordPress"
+
+      # Step 2: Build CLI Tool
+      - name: Build and Package CLI
+        run: |
+          cd cli
+          npm install
+          cd ..
+          mkdir -p dist/cli
+          tar -czf dist/cli/rtw-cli.tar.gz cli/
+
+      # Step 3: Build Core Engine
+      - name: Compile Core Transpiler Engine
+        run: |
+          cd core-engine
+          npm install
+          npm run build
+          cd ..
+
+      # Step 4: Create GitHub Release
+      - name: Create GitHub Release with Auto-Update Assets
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            dist/plugins/wp-github-bridge.zip
+            dist/cli/rtw-cli.tar.gz
+          name: Release ${{ github.ref_name }}
+          body: |
+            ## ⚡ RTW Universal Suite Release ${{ github.ref_name }}
+            
+            ### Included Packages:
+            - **`wp-github-bridge.zip`**: WordPress Dashboard Companion Plugin with Auto-Updater & GitHub REST Bridge.
+            - **`rtw-cli.tar.gz`**: Universal Command-Line Transpiler (`npx rtw-convert`).
+            - **Core Transpiler AST**: Updated to WPCS 3.4.1 & FSE theme.json v3.
+            
+            ### Auto-Update Support:
+            Existing WordPress installations with `wp-github-bridge` will automatically detect this release via the `Update URI` header!
+          draft: false
+          prerelease: false

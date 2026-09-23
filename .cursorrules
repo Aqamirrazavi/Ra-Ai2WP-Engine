@@ -1,0 +1,13 @@
+# Cursor AI Rules for Ra-Ai2WP-Engine
+
+# Languages & Technologies
+- Core: TypeScript, Node.js 20+, PHP 8.0+, Kotlin, Jetpack Compose
+- WordPress: Standards WPCS 3.4.1, FSE theme.json v3, block.json v3
+- Styling: Material 3 for Android, WordPress CSS logical properties for WP Admin
+
+# Coding Conventions
+- Prefix all PHP functions with `rtw_bridge_` or use namespace `RaAqamir\RtwBridge`.
+- Always sanitize inputs with `sanitize_text_field` / `sanitize_textarea_field`.
+- Always escape outputs with `esc_html`, `esc_attr`, `esc_url`.
+- Always verify Nonces for POST/REST mutating actions.
+- Use Conventional Commits: `feat(scope): message`, `fix(scope): message`.

@@ -1,0 +1,46 @@
+version: 2
+updates:
+  # 1. Root npm dependencies
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 5
+
+  # 2. CLI package
+  - package-ecosystem: "npm"
+    directory: "/cli"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+
+  # 3. Core Engine package
+  - package-ecosystem: "npm"
+    directory: "/core-engine"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+
+  # 4. API Service package
+  - package-ecosystem: "npm"
+    directory: "/api-service"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+
+  # 5. WordPress Bridge Plugin
+  - package-ecosystem: "composer"
+    directory: "/wp-github-bridge"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+
+  # 6. GitHub Actions Workflows (SHA Pinning alerts)
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5

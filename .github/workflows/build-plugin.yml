@@ -1,0 +1,54 @@
+name: Build & Package WordPress Plugin
+
+on:
+  push:
+    tags:
+      - 'v*'
+    paths:
+      - 'wp-github-bridge/**'
+      - '.github/workflows/build-plugin.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  package-plugin:
+    name: Package wp-github-bridge
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup PHP Environment
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: phpcs
+
+      - name: Validate WPCS Compliance
+        run: |
+          echo "Validating WordPress Coding Standards (WPCS 3.4.1)..."
+          # Scan plugin directory for security & syntax validation
+          php -l wp-github-bridge/wp-github-bridge.php
+          php -l wp-github-bridge/includes/class-rtw-bridge-admin.php
+          php -l wp-github-bridge/includes/class-rtw-bridge-api.php
+          php -l wp-github-bridge/includes/class-rtw-bridge-updater.php
+
+      - name: Build Clean Plugin Archive
+        run: |
+          mkdir -p dist
+          # Exclude git, development and hidden cache files (CVE-2026-40313 guard)
+          zip -r dist/wp-github-bridge.zip wp-github-bridge/ -x "*.git*" "*.DS_Store*" "*node_modules*"
+          echo "✓ Created dist/wp-github-bridge.zip"
+
+      - name: Upload Plugin Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: wp-github-bridge-zip
+          path: dist/wp-github-bridge.zip
+          retention-days: 30

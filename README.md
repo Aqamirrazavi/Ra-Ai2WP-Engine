@@ -30,21 +30,39 @@ rtw-converter/
 │   ├── bin/rtw.js              # Command-line executable
 │   └── package.json
 │
+├── wp-github-bridge/           # WordPress Companion Plugin (Admin Dashboard & Auto-Updater)
+│   ├── wp-github-bridge.php    # Plugin entrypoint with Update URI
+│   ├── includes/               # REST API (10 routes), DB dbDelta & AES-256 encryption
+│   └── assets/                 # React UI, RTL styles and admin scripts
+│
+├── pwa/                        # Progressive Web Application (Vite / React / Service Worker)
+│   ├── index.html              # Offline-ready responsive web client
+│   └── sw.js                   # Caching and background sync
+│
+├── apps/
+│   ├── desktop/                # Desktop Client for Windows, macOS, and Linux
+│   └── android/ (or app/)      # Android Mobile Companion Studio (Jetpack Compose / M3)
+│
 ├── api-service/                # Express & Serverless REST API for Webhooks & SaaS
 │   ├── src/server.ts           # Webhook & conversion microservice
 │   └── Dockerfile
 │
-├── .github/workflows/          # GitHub Actions & CI/CD Pipeline
+├── .github/workflows/          # Full CI/CD Distribution & Security Suite
 │   ├── rtw-bridge.yml          # Automated repository_dispatch conversion workflow
-│   └── release-builder.yml     # Automated WordPress ZIP packaging & release
+│   ├── release-builder.yml     # Automated WordPress ZIP packaging & release
+│   ├── deploy-pwa.yml          # GitHub Pages deployment pipeline for PWA
+│   ├── build-plugin.yml        # Isolated plugin validation and zip packager
+│   ├── build-android.yml       # APK and AAB build pipeline
+│   ├── publish-npm.yml         # OIDC Provenance publisher to npm registry
+│   └── security-scan.yml       # Dependency auditing and CVE-2026 guards
 │
-├── docs/                       # Architectural guides, WPCS specifications & API docs
-│   ├── ARCHITECTURE.md
-│   ├── WPCS_GUIDELINES.md
-│   └── API_REFERENCE.md
-│
-├── app/                        # Android Mobile Companion Studio (Jetpack Compose / M3)
-│   └── src/main/java/com/example/...
+├── docs/                       # Comprehensive Persian & English Documentation
+│   ├── GETTING-STARTED-FA.md   # راهنمای شروع سریع (فارسی)
+│   ├── FAQ-FA.md               # پرسش‌های متداول و خطایابی (فارسی)
+│   ├── ARCHITECTURE.md         # Full system architecture specification
+│   ├── API.md                  # REST API routes and specification
+│   ├── HOOKS.md                # WordPress Extensibility actions & filters
+│   └── SECURITY.md             # Security policy and 2026 CVE coverage
 │
 ├── docker-compose.yml          # One-click local deployment for Engine & API
 └── README.md                   # Repository Hub Documentation

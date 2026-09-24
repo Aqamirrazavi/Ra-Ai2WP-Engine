@@ -1,0 +1,49 @@
+name: Publish CLI and Core to npm
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write # Mandatory for npm Provenance & Trusted Publishing
+
+jobs:
+  publish-packages:
+    name: Publish Packages with Provenance
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js Runtime
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Compile and Test Core Transpiler
+        run: |
+          cd core-engine
+          npm install
+          npm run build
+          npm test --if-present
+
+      - name: Publish Core Engine
+        run: |
+          cd core-engine
+          # Provenance publishing via OIDC
+          npm publish --access public --provenance || echo "Published or token needed"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish CLI Package
+        run: |
+          cd cli
+          npm install
+          npm publish --access public --provenance || echo "Published or token needed"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

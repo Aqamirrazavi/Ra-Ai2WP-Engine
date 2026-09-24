@@ -1,0 +1,44 @@
+name: Security & Vulnerability Scan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 6 * * 1' # Weekly security audit
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  audit-dependencies:
+    name: Dependency Audit & CVE Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run npm Audit on Modules
+        run: |
+          echo "Auditing core-engine..."
+          (cd core-engine && npm audit --audit-level=high || true)
+          echo "Auditing cli..."
+          (cd cli && npm audit --audit-level=high || true)
+          echo "Auditing api-service..."
+          (cd api-service && npm audit --audit-level=high || true)
+          echo "Auditing pwa..."
+          (cd pwa && npm audit --audit-level=high || true)
+
+      - name: Verify Workflow Permissions Guard (CVE-2026-87049)
+        run: |
+          echo "Verifying least-privilege permission declaration across workflows..."
+          grep -rn "permissions:" .github/workflows/

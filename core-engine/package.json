@@ -19,7 +19,7 @@
   "author": "RTW Core Team",
   "license": "MIT",
   "dependencies": {
-    "@google/genai": "^0.1.1",
+    "@google/genai": "^2.24.0",
     "archiver": "^7.0.1"
   },
   "devDependencies": {

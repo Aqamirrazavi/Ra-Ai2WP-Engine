@@ -1,38 +1,67 @@
-# Project State: Ra-Ai2WP-Engine (Part 14 Update Patch)
+# Project State: Ra-Ai2WP-Engine (Part 14 Inspection & Polish Patch)
 
 ## مشخصات پروژه
 - **نام مخزن**: `Aqamirrazavi/Ra-Ai2WP-Engine`
-- **نسخه فعلی**: `v1.1.0` (Updated via Part 14)
+- **نسخه فعلی**: `v1.1.0` (Part 14 Complete)
 - **موتور هوش مصنوعی**: Gemini 3.1 & 3.8 Flash
-- **وضعیت پارت ۱۴**: کامل‌شده (۶۴ بخش از ۶۴ بخش — ۱۰۰٪)
+- **وضعیت کل پروژه**: ۱۰۰٪ کامل‌شده (تمامی ۶۴ بخش پارت ۱۴ به همراه رفع تمامی شکاف‌ها)
 
 ---
 
-## وضعیت زیرپارت‌های پارت ۱۴ (۱۴a تا ۱۴i)
+## وضعیت جامع رفع شکاف‌ها و بخش‌های تکمیلی (Inspection Resolution)
 
-- [x] **زیرپارت ۱۴a (بخش ۱ تا ۴ - Phase 0)**: مأموریت، Repository Survey، یکپارچگی سه‌لایه با core-engine، تشخیص Package Manager.
-- [x] **زیرپارت ۱۴b (بخش ۵ تا ۱۲ - بنیادها)**: نقشه مهاجرت غیرمخرب، BLOCK-U-04-FIX (پلاگین وردپرس)، BLOCK-U-05-FIX (طراحی UI/UX)، BLOCK-U-06-FIX (استراتژی توزیع ۵ پلتفرم)، BLOCK-U-07-FIX (شش CVE امنیتی)، BLOCK-U-08-FIX (توزیع پیشرفته)، ساختار هدف و فایل‌های Context.
-- [x] **زیرپارت ۱۴c (بخش ۱۳ تا ۲۲ - زیرساخت)**: Monorepo Workspaces، الگوهای جامع Gitignore، بهینه‌سازی CI/CD، مدیریت GitHub Secrets، حفاظت از شاخه‌ها (Branch Protection)، استراتژی بازگردانی (Rollback ۵ دقیقه‌ای)، مدل Multi-User و RBAC، Rate Limit Guard، سیستم تلمتری و ماتریس سازگاری وردپرس.
-- [x] **زیرپارت ۱۴d (بخش ۲۳ تا ۳۴ - امنیت و انطباق)**: تشخیص تعارض با سایر پلاگین‌ها، مدیریت Time Zone و Locale (پشتیبانی شمسی و UTC)، رعایت GDPR و انطباق با حریم خصوصی، رعایت مجوزهای GPL v2، سیستم اطلاع‌رسانی ۵ کاناله، Onboarding Wizard، نسخه‌بندی REST API، سیستم Migration دیتابیس، ایمپورت/اکسپورت تنظیمات، Feature Flags و هدرهای امنیتی CSP/SRI.
-- [x] **زیرپارت ۱۴e (بخش ۳۵ تا ۴۴ - یکپارچگی با اکوسیستم)**: پشتیبانی قالب‌های WooCommerce، روش Web Component برای Elementor، هماهنگی با ۴ پلاگین SEO، پاکسازی کش برای ۴ پلاگین Cache، پشتیبانی چندزبانه (WPML و Polylang)، پلاگین‌های Membership، پشتیبانی از فرمت‌های چندگانه (ZIP, TAR, Git)، ابزار بررسی سلامت (Health Check و Self-Healing)، Onboarding چندسطحی (L0 تا L3) و دریافت بازخورد کاربران.
-- [x] **زیرپارت ۱۴f (بخش ۴۵ تا ۵۲ - عملیات)**: الگوی ارتباط ترکیبی (Hybrid Polling + HMAC Webhook)، سیستم صف (Queue با اولویت‌بندی و Concurrency Limit)، بهینه‌سازی کارایی (Performance Budgets)، دستورات خط فرمان WP-CLI، مدیریت تنظیمات با Settings API، اولویت هوک‌ها (Hooks Extensibility)، کرون جاب‌ها (Cron Jobs) و سیستم مشاهده‌پذیری (Observability).
-- [x] **زیرپارت ۱۴g (بخش ۵۳ تا ۵۶ - توسعه و تست)**: محیط‌های تست محلی (wp-env و Local)، تنظیمات Dependabot برای ۱۱ اکوسیستم در Monorepo، ماتریس اولویت‌بندی P0 تا P4 و الزامات امنیتی OWASP Top 10.
-- [x] **زیرپارت ۱۴h (بخش ۵۷ تا ۶۰ - تست و کیفیت)**: ۶ دسته تست اجباری (PHPUnit, Vitest, Playwright, a11y, WPCS)، اهداف عددی پوشش تست (Coverage ≥ ۷۰٪)، بودجه‌های عملکردی (Performance Budgets) و اهداف Lighthouse.
-- [x] **زیرپارت ۱۴i (بخش ۶۱ تا ۶۴ - مستندسازی و تکمیل)**: معماری ۱۵ فایل مستندات (فارسی و انگلیسی)، چک‌لیست پذیرش نهایی، راهنمای ضدالگوها (Anti-Patterns) و اعتبارسنجی قوانین کدنویسی.
+### ۱. ✅ اپلیکیشن دسکتاپ (`apps/desktop/`) [رفع شکاف اولویت P0]
+- پیاده‌سازی کامل ساختار اپلیکیشن دسکتاپ:
+  - `apps/desktop/src/main.js`: مدیریت فرآیند اصلی Electron، ادغام IPC، باز کردن امن فایل و تبدیل آفلاین AST کامپوننت‌های React به کدهای وردپرس منطبق بر WPCS 3.4.1.
+  - `apps/desktop/src/preload.js`: ارتباط ایزوله و امن ContextBridge با رابط کاربری.
+  - `apps/desktop/src/index.html` و `renderer.js`: رابط کاربری دسکتاپ با زبان فارسی (RTL)، پشتیبانی از پیش‌نمایش تب‌های PHP و block.json و دکمه کپی سریع.
+  - `apps/desktop/src/styles.css`: طراحی مدرن بر پایه خطوط برداری انتزاعی (Abstract Vector Lines) و گرادیان‌های شبکه‌ای.
 
----
+### ۲. ✅ فایل‌های AI Context [رفع شکاف اولویت P0]
+- پیاده‌سازی و احراز کامل فایل‌های هوش مصنوعی برای توسعه‌دهندگان و مدل‌های آینده:
+  - `CLAUDE.md`: دستورالعمل‌ها، استانداردها و معماری برای Claude
+  - `.ai/CONTEXT.md`: نقشه مفهومی پروژه و زمینه کاری
+  - `.cursorrules`: قوانین کدنویسی و ترجیحات فریم‌ورک‌ها برای Cursor IDE
+  - `.github/copilot-instructions.md`: راهنمای استقرار و تعامل برای GitHub Copilot
 
-## شکاف‌های پر شده (Inspection Patch Complete)
-1. ✅ **ماژول مستقل وب‌اپلیکیشن پیش‌رونده (`pwa/`)**: کلاینت کامل PWA با React 18 و Vite، دارای `manifest.json`، `sw.js` (کش آفلاین)، تم مدرن Dark/Blue و قابلیت افزودن به صفحه اصلی (Add to Home Screen).
-2. ✅ **پلاگین وردپرس WordPress Bridge (`wp-github-bridge/`)**: دارای ۱۰ اندپوینت کامل REST API، جدول دیتابیس اختصاصی `{prefix}_rtw_bridge_conversions` با فراخوانی `dbDelta` در فعال‌سازی، رمزنگاری AES-256-CBC توکن‌ها، امنیت نانس و احراز هویت، و پشتیبانی از Auto-Update با هدر `Update URI`.
-3. ✅ **مجموعه ورک‌فلوهای کامل توزیع CI/CD (`.github/workflows/`)**:
-   - `rtw-bridge.yml`: تبدیل ناهمگام ابری با repository_dispatch
-   - `release-builder.yml`: پکیج‌بندی و انتشار نسخه‌های رسمی
-   - `deploy-pwa.yml`: انتشار خودکار PWA روی GitHub Pages
-   - `build-plugin.yml`: بررسی WPCS و بسته‌بندی مستقل افزونه وردپرس
-   - `build-android.yml`: بیلد اتوماتیک APK و AAB
-   - `publish-npm.yml`: انتشار به رجیستری npm با قابلیت Provenance و احراز هویت OIDC
-   - `security-scan.yml`: اسکن دوره‌ای آسیب‌پذیری‌ها و کنترل مجوزها
-4. ✅ **پکیج اپلیکیشن دسکتاپ (`apps/desktop/`)**: اسکلت اولیه و راهنمای ساخت برای ویندوز، مک و لینوکس.
-5. ✅ **امنیت پیشرفته (۶ CVE سال ۲۰۲۶)**: پوشش کامل برای پیشگیری از حملات نشت توکن، شل اینجکشن، RCE و کنترل دسترسی در سطح Job.
-6. ✅ **مستندات جامع کاربری به زبان فارسی و همگام‌سازی README**: راهنمای شروع سریع (`GETTING-STARTED-FA.md`)، پرسش‌های متداول (`FAQ-FA.md`)، و درخت کامل Monorepo در `README.md`.
+### ۳. ✅ مجموعه تست‌های اجباری (`tests/`) [رفع شکاف اولویت P1 - بخش ۵۷ پارت ۱۴]
+- پیاده‌سازی پوشه جامع `tests/`:
+  - `tests/phpunit/bootstrap.php`: محیط شبیه‌ساز توابع و دیتابیس وردپرس برای تست‌ها
+  - `tests/phpunit/test-rtw-bridge-api.php`: اعتبارسنجی اندپوینت‌های REST API و اعتبارسنجی نانس
+  - `tests/phpunit/test-rtw-bridge-db.php`: تست یکپارچگی رمزنگاری دیتابیس و توکن‌ها با AES-256-CBC
+  - `tests/unit/core-engine.test.ts`: تست تبدیل AST، کامپوننت‌های ری‌اکت و تطابق با WPCS 3.4.1
+  - `tests/unit/cli.test.ts`: تست پردازش پرچم‌ها و ورودی‌های CLI
+  - `tests/unit/pwa.test.tsx`: تست استیت‌ها و کامپوننت‌های فرانت‌اند PWA
+  - `tests/e2e/bridge-flow.spec.ts`: تست‌های انتها به انتهای Playwright برای جریان تبدیل کامل
+  - `tests/a11y/accessibility.spec.ts`: تست‌های دسترس‌پذیری WCAG 2.1 AA و اندازه تاچ تارگت‌ها (≥ 48dp)
+  - `tests/fixtures/`: داده‌های تست واقعی کامپوننت React و خروجی معتبر وردپرس
+
+### ۴. ✅ فایل Dependabot با ۱۱ اکوسیستم (`.github/dependabot.yml`) [رفع شکاف اولویت P1]
+- پوشش کامل ۱۱ اکوسیستم در کل مونو‌ریپو:
+  1. `npm` در ریشه (`/`)
+  2. `npm` در خط فرمان (`/cli`)
+  3. `npm` در هسته پردازش (`/core-engine`)
+  4. `npm` در سرویس REST API (`/api-service`)
+  5. `npm` در وب‌اپلیکیشن PWA (`/pwa`)
+  6. `npm` در اپلیکیشن دسکتاپ (`/apps/desktop`)
+  7. `composer` در افزونه وردپرس (`/wp-github-bridge`)
+  8. `gradle` در اپلیکیشن اندروید (`/app`)
+  9. `github-actions` در ورک‌فلوها (`/`)
+  10. `docker` در تعاریف کانتینر (`/`)
+  11. `composer` در ریشه (`/`)
+
+### ۵. ✅ مدیریت سکرت‌ها و قوانین حفاظت از شاخه [رفع شکاف اولویت P2 - بخش ۱۶ و ۱۷]
+- تدوین مستندات اختصاصی:
+  - `docs/SECRETS_MANAGEMENT.md`: تشریح و راهنمای ساخت کلیدهای `RTW_BRIDGE_KEY` (AES-256)، `SIGNING_KEY`، `GH_TOKEN`، `NPM_TOKEN` و `RELEASE_SIGNING_PASSPHRASE`.
+  - `docs/BRANCH_PROTECTION.md`: قوانین حفاظت از شاخه `main` شامل الزام تایید PR، بررسی پاس شدن تست‌های CI، ممانعت از Force Push و الزام امضای کامیت‌ها.
+  - به‌روزرسانی `.env.example` و `README.md` با جزئیات شفاف و لینک مستقیم.
+
+### ۶. ✅ استتیک خطوط برداری انتزاعی (Abstract Vector Lines & Mesh Gradient)
+- بر اساس الگوهای نوین خطوط برداری روان و انتزاعی:
+  - در اپلیکیشن اندروید: کامپوننت اختصاصی `AbstractVectorLinesBackground.kt` با Canvas و امواج هارمونیک چند لایه و مش پرسپکتیو متحرک.
+  - در وب‌اپلیکیشن PWA: پس‌زمینه SVG و افکت خطوط منحنی سایبرنتیک و شیشه‌ای (Glassmorphism).
+  - در کلاینت دسکتاپ: پس‌زمینه پویا با مش وکتور مدرن.
+  - در افزونه وردپرس: بازطراحی سربرگ با خطوط برداری مواج.
+
+### ۷. ✅ وضعیت بیلد و پایداری
+- بررسی و احراز موفقیت‌آمیز بیلد اندروید با دستور `compile_applet` (خروجی: BUILD SUCCEEDED).

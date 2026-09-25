@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RTW Desktop Studio v1.1.0</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="ambient-mesh-lines"></div>
+  <div class="app-layout">
+    <header class="app-header">
+      <div class="brand">
+        <svg class="brand-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+        <span class="brand-name">RTW Desktop Studio</span>
+        <span class="version-tag">v1.1.0 Native Client</span>
+      </div>
+      <div class="header-actions">
+        <button id="btn-open-file" class="btn btn-primary">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+          باز کردن فایل React
+        </button>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <div class="editor-pane">
+        <div class="pane-header">
+          <span>کد منبع React (JSX / TSX)</span>
+          <span id="file-info" class="file-info">کد نمونه پیش‌فرض</span>
+        </div>
+        <textarea id="react-input" class="code-area" spellcheck="false">import React, { useState } from 'react';
+
+export default function PricingHero({ title = "خدمات تبدیل حرفه‌ای" }) {
+  const [active, setActive] = useState(false);
+
+  return (
+    <div className="pricing-hero-container">
+      <h2 className="title">{title}</h2>
+      <p className="subtitle">تبدیل هوشمند به بلاک گوتنبرگ با رعایت استانداردهای WPCS 3.4.1</p>
+      <button onClick={() => setActive(!active)} className="cta-btn">
+        {active ? 'انتخاب شد' : 'شروع کنید'}
+      </button>
+    </div>
+  );
+}</textarea>
+        <div class="pane-footer">
+          <button id="btn-convert" class="btn btn-accent">
+            ⚡ تبدیل آفلاین به WordPress
+          </button>
+        </div>
+      </div>
+
+      <div class="output-pane">
+        <div class="pane-header">
+          <span>خروجی تولید شده وردپرس</span>
+          <div class="tab-selectors">
+            <button id="tab-php" class="tab-btn active">PHP Block</button>
+            <button id="tab-json" class="tab-btn">block.json</button>
+          </div>
+        </div>
+        <pre id="output-content" class="code-area output-area"><code>// خروجی کد گوتنبرگ پس از فشردن دکمه تبدیل اینجا نمایش داده می‌شود...</code></pre>
+        <div class="pane-footer">
+          <button id="btn-copy" class="btn btn-secondary">کپی در کلیپ‌بورد</button>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="renderer.js"></script>
+</body>
+</html>

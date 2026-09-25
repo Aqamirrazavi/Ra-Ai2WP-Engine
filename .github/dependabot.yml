@@ -1,6 +1,6 @@
 version: 2
 updates:
-  # 1. Root npm dependencies
+  # 1. Root npm workspace dependencies
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
@@ -10,36 +10,71 @@ updates:
       timezone: "UTC"
     open-pull-requests-limit: 5
 
-  # 2. CLI package
+  # 2. CLI tool (cli/)
   - package-ecosystem: "npm"
     directory: "/cli"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
 
-  # 3. Core Engine package
+  # 3. Core Engine (core-engine/)
   - package-ecosystem: "npm"
     directory: "/core-engine"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
 
-  # 4. API Service package
+  # 4. REST API Service (api-service/)
   - package-ecosystem: "npm"
     directory: "/api-service"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
 
-  # 5. WordPress Bridge Plugin
+  # 5. Progressive Web App (pwa/)
+  - package-ecosystem: "npm"
+    directory: "/pwa"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+
+  # 6. Desktop Application (apps/desktop/)
+  - package-ecosystem: "npm"
+    directory: "/apps/desktop"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+
+  # 7. WordPress Bridge Plugin (wp-github-bridge/)
   - package-ecosystem: "composer"
     directory: "/wp-github-bridge"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
 
-  # 6. GitHub Actions Workflows (SHA Pinning alerts)
+  # 8. Android App Gradle Dependencies (app/)
+  - package-ecosystem: "gradle"
+    directory: "/app"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+
+  # 9. GitHub Actions Workflows (.github/workflows)
   - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+
+  # 10. Container & Docker definitions
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+
+  # 11. Root Composer Ecosystem
+  - package-ecosystem: "composer"
     directory: "/"
     schedule:
       interval: "weekly"

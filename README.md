@@ -56,13 +56,22 @@ rtw-converter/
 │   ├── publish-npm.yml         # OIDC Provenance publisher to npm registry
 │   └── security-scan.yml       # Dependency auditing and CVE-2026 guards
 │
+├── tests/                       # Comprehensive Automated Test Suite (Part 14 - Section 57)
+│   ├── phpunit/                # PHPUnit tests for WordPress Bridge & AES-256 DB
+│   ├── unit/                   # Vitest unit tests for Core Engine, CLI & PWA
+│   ├── e2e/                    # Playwright End-to-End conversion workflow
+│   ├── a11y/                   # WCAG 2.1 AA accessibility validation
+│   └── fixtures/               # Golden React & WordPress test fixtures
+│
 ├── docs/                       # Comprehensive Persian & English Documentation
 │   ├── GETTING-STARTED-FA.md   # راهنمای شروع سریع (فارسی)
 │   ├── FAQ-FA.md               # پرسش‌های متداول و خطایابی (فارسی)
 │   ├── ARCHITECTURE.md         # Full system architecture specification
 │   ├── API.md                  # REST API routes and specification
 │   ├── HOOKS.md                # WordPress Extensibility actions & filters
-│   └── SECURITY.md             # Security policy and 2026 CVE coverage
+│   ├── SECURITY.md             # Security policy and 2026 CVE coverage
+│   ├── SECRETS_MANAGEMENT.md   # Secrets & cryptographic key management
+│   └── BRANCH_PROTECTION.md    # Branch governance and merge rules
 │
 ├── docker-compose.yml          # One-click local deployment for Engine & API
 └── README.md                   # Repository Hub Documentation
@@ -184,6 +193,37 @@ The `app/` module contains a full Android Jetpack Compose companion application 
 - Designing theme graphics and `screenshot.png` assets via Gemini image models.
 - Cloud syncing with Firebase Firestore and local Room DB.
 - Triggering GitHub Actions via remote dispatch.
+
+---
+
+## 🧪 Testing Suite & Quality Gates (Part 14 - Section 57)
+
+RTW includes a 6-tier test automation suite:
+- **PHPUnit**: REST API mock testing and AES-256 token encryption verification (`tests/phpunit/`).
+- **Vitest**: Fast unit tests for React AST parsing, CLI options, and PWA state (`tests/unit/`).
+- **Playwright**: End-to-end browser tests for the complete conversion lifecycle (`tests/e2e/`).
+- **A11y (WCAG 2.1 AA)**: Screen reader compliance, touch targets (≥ 48dp), and contrast validation (`tests/a11y/`).
+- **WPCS 3.4.1**: Strict automated PHP linter for all generated themes and plugins.
+
+Run tests locally:
+```bash
+npm run test:unit      # Execute Vitest
+composer test:php      # Execute PHPUnit
+npx playwright test    # Execute Playwright E2E
+```
+
+---
+
+## 🔐 GitHub Secrets & Branch Protection (Part 14 - Sections 16 & 17)
+
+### Required Secrets
+- `RTW_BRIDGE_KEY`: 256-bit key for AES-256-CBC token encryption in WordPress.
+- `SIGNING_KEY`: Base64 Android release keystore string.
+- `RELEASE_SIGNING_PASSPHRASE`: GPG signature passphrase.
+- `GH_TOKEN`: Personal Access Token with repository dispatch permissions.
+- `NPM_TOKEN`: Automated package publishing token.
+
+See [`docs/SECRETS_MANAGEMENT.md`](docs/SECRETS_MANAGEMENT.md) and [`docs/BRANCH_PROTECTION.md`](docs/BRANCH_PROTECTION.md) for full setup instructions.
 
 ---
 

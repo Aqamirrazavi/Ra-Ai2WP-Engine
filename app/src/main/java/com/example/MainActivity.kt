@@ -68,6 +68,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.repository.ConversionRepository
+import com.example.ui.components.AbstractVectorLinesBackground
 import com.example.ui.screens.AssetStudioScreen
 import com.example.ui.screens.ConverterStudioScreen
 import com.example.ui.screens.DashboardScreen
@@ -232,6 +233,11 @@ fun MainAppScreen(repository: ConversionRepository) {
                 .padding(innerPadding)
                 .background(MaterialTheme.colorScheme.background)
         ) {
+            AbstractVectorLinesBackground(
+                modifier = Modifier.fillMaxSize(),
+                alphaMultiplier = 0.6f
+            )
+
             when (currentDestination) {
                 NavDestination.DASHBOARD -> DashboardScreen(
                     conversions = conversions,

@@ -8,6 +8,7 @@ import androidx.credentials.exceptions.GetCredentialException
 import com.example.data.model.UserProfile
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
@@ -17,46 +18,77 @@ import kotlinx.coroutines.tasks.await
 
 class FirebaseAuthManager(private val context: Context) {
 
-    private val auth: FirebaseAuth by lazy {
-        FirebaseAuth.getInstance()
+    private val auth: FirebaseAuth? by lazy {
+        try {
+            if (FirebaseApp.getApps(context).isNotEmpty()) {
+                FirebaseAuth.getInstance()
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            Log.w("FirebaseAuthManager", "Unable to obtain FirebaseAuth instance", e)
+            null
+        }
     }
 
     private val _currentUserProfile = MutableStateFlow<UserProfile?>(null)
     val currentUserProfile: StateFlow<UserProfile?> = _currentUserProfile
 
     init {
-        auth.addAuthStateListener { firebaseAuth ->
-            val user = firebaseAuth.currentUser
-            _currentUserProfile.value = user?.toUserProfile()
-        }
-        val initialUser = auth.currentUser
-        if (initialUser != null) {
-            _currentUserProfile.value = initialUser.toUserProfile()
+        try {
+            val currentAuth = auth
+            if (currentAuth != null) {
+                currentAuth.addAuthStateListener { firebaseAuth ->
+                    val user = firebaseAuth.currentUser
+                    _currentUserProfile.value = user?.toUserProfile() ?: defaultGuestProfile()
+                }
+                val initialUser = currentAuth.currentUser
+                _currentUserProfile.value = initialUser?.toUserProfile() ?: defaultGuestProfile()
+            } else {
+                _currentUserProfile.value = defaultGuestProfile()
+            }
+        } catch (e: Exception) {
+            Log.w("FirebaseAuthManager", "Auth state listener initialization failed, using default profile", e)
+            _currentUserProfile.value = defaultGuestProfile()
         }
     }
 
+    private fun defaultGuestProfile(): UserProfile {
+        return UserProfile(
+            uid = "local_dev_user",
+            displayName = "توسعه‌دهنده محلی (Local Dev)",
+            email = "dev@rtw.studio",
+            isAnonymous = true
+        )
+    }
+
     suspend fun signInAnonymously(): Result<UserProfile> {
+        val currentAuth = auth
+        if (currentAuth == null) {
+            val fallback = defaultGuestProfile()
+            _currentUserProfile.value = fallback
+            return Result.success(fallback)
+        }
+
         return try {
-            val result = auth.signInAnonymously().await()
-            val profile = result.user?.toUserProfile()
-                ?: UserProfile(uid = "guest_${System.currentTimeMillis()}", displayName = "کاربر مهمان (Guest)", email = "guest@rtw.local", isAnonymous = true)
+            val result = currentAuth.signInAnonymously().await()
+            val profile = result.user?.toUserProfile() ?: defaultGuestProfile()
             _currentUserProfile.value = profile
             Result.success(profile)
         } catch (e: Exception) {
             Log.e("FirebaseAuthManager", "Anonymous auth failed", e)
-            // Local fallback profile
-            val fallback = UserProfile(
-                uid = "offline_user",
-                displayName = "توسعه‌دهنده محلی (Local Dev)",
-                email = "dev@rtw.studio",
-                isAnonymous = true
-            )
+            val fallback = defaultGuestProfile()
             _currentUserProfile.value = fallback
             Result.success(fallback)
         }
     }
 
     suspend fun signInWithGoogle(): Result<UserProfile> {
+        val currentAuth = auth
+        if (currentAuth == null) {
+            return signInAnonymously()
+        }
+
         return try {
             val credentialManager = CredentialManager.create(context)
             val googleIdOption = GetGoogleIdOption.Builder()
@@ -78,7 +110,7 @@ class FirebaseAuthManager(private val context: Context) {
                 val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
                 val idToken = googleIdTokenCredential.idToken
                 val authCredential = GoogleAuthProvider.getCredential(idToken, null)
-                val authResult = auth.signInWithCredential(authCredential).await()
+                val authResult = currentAuth.signInWithCredential(authCredential).await()
                 val user = authResult.user?.toUserProfile()
                 if (user != null) {
                     _currentUserProfile.value = user
@@ -100,11 +132,11 @@ class FirebaseAuthManager(private val context: Context) {
 
     fun signOut() {
         try {
-            auth.signOut()
+            auth?.signOut()
         } catch (e: Exception) {
             Log.e("FirebaseAuthManager", "Sign out error", e)
         }
-        _currentUserProfile.value = null
+        _currentUserProfile.value = defaultGuestProfile()
     }
 
     private fun FirebaseUser.toUserProfile(): UserProfile {

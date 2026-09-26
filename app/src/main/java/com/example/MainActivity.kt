@@ -21,14 +21,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Login
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.CloudDone
 import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.FolderZip
 import androidx.compose.material.icons.filled.Image
-import androidx.compose.material.icons.filled.Login
-import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Psychology
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material3.AlertDialog
@@ -67,6 +67,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import android.util.Log
 import com.example.data.repository.ConversionRepository
 import com.example.ui.components.AbstractVectorLinesBackground
 import com.example.ui.screens.AssetStudioScreen
@@ -81,6 +82,7 @@ import com.example.ui.theme.ReactCyan
 import com.example.ui.theme.SuccessGreen
 import com.example.ui.theme.WordPressBlue
 import com.google.firebase.FirebaseApp
+import com.google.firebase.FirebaseOptions
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -90,9 +92,25 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         try {
-            FirebaseApp.initializeApp(this)
+            if (FirebaseApp.getApps(this).isEmpty()) {
+                FirebaseApp.initializeApp(this)
+            }
         } catch (e: Exception) {
-            // Firebase already initialized or fallback
+            Log.w("MainActivity", "Default FirebaseApp init failed: ${e.message}")
+        }
+
+        if (FirebaseApp.getApps(this).isEmpty()) {
+            try {
+                val options = FirebaseOptions.Builder()
+                    .setApplicationId(packageName)
+                    .setApiKey("AIzaSyDummyKeyForFallbackInitialization00")
+                    .setProjectId("rtw-converter-local")
+                    .build()
+                FirebaseApp.initializeApp(this, options)
+                Log.i("MainActivity", "FirebaseApp initialized with fallback options")
+            } catch (e: Exception) {
+                Log.w("MainActivity", "Fallback FirebaseApp init failed: ${e.message}")
+            }
         }
 
         repository = ConversionRepository(this)
@@ -346,7 +364,7 @@ fun MainAppScreen(repository: ConversionRepository) {
                             modifier = Modifier.fillMaxWidth().testTag("google_sign_in_button"),
                             colors = ButtonDefaults.buttonColors(containerColor = PrimaryLight)
                         ) {
-                            Icon(imageVector = Icons.Default.Login, contentDescription = null, modifier = Modifier.size(16.dp))
+                            Icon(imageVector = Icons.AutoMirrored.Filled.Login, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(8.dp))
                             Text("ورود با حساب Google")
                         }
@@ -361,7 +379,7 @@ fun MainAppScreen(repository: ConversionRepository) {
                             },
                             modifier = Modifier.fillMaxWidth().testTag("sign_out_button")
                         ) {
-                            Icon(imageVector = Icons.Default.Logout, contentDescription = null, modifier = Modifier.size(16.dp))
+                            Icon(imageVector = Icons.AutoMirrored.Filled.Logout, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(8.dp))
                             Text("خروج از حساب")
                         }

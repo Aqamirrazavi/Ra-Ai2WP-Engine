@@ -20,6 +20,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.MenuBook
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Cloud
 import androidx.compose.material.icons.filled.Code
@@ -28,15 +30,13 @@ import androidx.compose.material.icons.filled.FolderZip
 import androidx.compose.material.icons.filled.Hub
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.MenuBook
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -138,7 +138,7 @@ fun HistoryBridgeScreen(
                     modifier = Modifier.testTag("tab_handbook"),
                     text = {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(imageVector = Icons.Default.MenuBook, contentDescription = null, modifier = Modifier.size(16.dp))
+                            Icon(imageVector = Icons.AutoMirrored.Filled.MenuBook, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(6.dp))
                             Text("دستورالعمل‌ها", fontSize = 12.sp, fontWeight = FontWeight.Bold)
                         }
@@ -262,7 +262,7 @@ fun HistoryBridgeScreen(
                                 AnimatedVisibility(visible = isExpanded) {
                                     Column {
                                         Spacer(modifier = Modifier.height(12.dp))
-                                        Divider()
+                                        HorizontalDivider()
                                         Spacer(modifier = Modifier.height(12.dp))
                                         CodeViewer(
                                             files = item.generatedFiles,
@@ -351,7 +351,7 @@ fun HistoryBridgeScreen(
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text("در حال ارتباط با API گیت‌هاب...")
                                 } else {
-                                    Icon(imageVector = Icons.Default.Send, contentDescription = null, modifier = Modifier.size(18.dp))
+                                    Icon(imageVector = Icons.AutoMirrored.Filled.Send, contentDescription = null, modifier = Modifier.size(18.dp))
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text("ارسال رویداد (Trigger Repository Dispatch)", fontWeight = FontWeight.Bold)
                                 }

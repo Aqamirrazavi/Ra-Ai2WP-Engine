@@ -6,18 +6,29 @@ import com.example.data.model.AssetItem
 import com.example.data.model.ConversionItem
 import com.example.data.model.GeneratedFile
 import com.example.data.model.OutputType
+import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.tasks.await
 
 class FirestoreManager {
 
-    private val firestore: FirebaseFirestore by lazy {
-        FirebaseFirestore.getInstance()
+    private val firestore: FirebaseFirestore? by lazy {
+        try {
+            if (FirebaseApp.getApps(FirebaseApp.getInstance().applicationContext).isNotEmpty()) {
+                FirebaseFirestore.getInstance()
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            Log.w("FirestoreManager", "Firestore not available: ${e.message}")
+            null
+        }
     }
 
     suspend fun saveConversion(userId: String, item: ConversionItem): Boolean {
         if (userId.isBlank()) return false
+        val fs = firestore ?: return false
         return try {
             val map = hashMapOf(
                 "id" to item.id,
@@ -40,7 +51,7 @@ class FirestoreManager {
                 }
             )
 
-            firestore.collection("users")
+            fs.collection("users")
                 .document(userId)
                 .collection("conversions")
                 .document(item.id)
@@ -55,8 +66,9 @@ class FirestoreManager {
 
     suspend fun loadConversions(userId: String): List<ConversionItem> {
         if (userId.isBlank()) return emptyList()
+        val fs = firestore ?: return emptyList()
         return try {
-            val snapshot = firestore.collection("users")
+            val snapshot = fs.collection("users")
                 .document(userId)
                 .collection("conversions")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
@@ -108,6 +120,7 @@ class FirestoreManager {
 
     suspend fun saveAsset(userId: String, asset: AssetItem): Boolean {
         if (userId.isBlank()) return false
+        val fs = firestore ?: return false
         return try {
             val map = hashMapOf(
                 "id" to asset.id,
@@ -120,7 +133,7 @@ class FirestoreManager {
                 "userId" to userId
             )
 
-            firestore.collection("users")
+            fs.collection("users")
                 .document(userId)
                 .collection("assets")
                 .document(asset.id)
@@ -135,8 +148,9 @@ class FirestoreManager {
 
     suspend fun loadAssets(userId: String): List<AssetItem> {
         if (userId.isBlank()) return emptyList()
+        val fs = firestore ?: return emptyList()
         return try {
-            val snapshot = firestore.collection("users")
+            val snapshot = fs.collection("users")
                 .document(userId)
                 .collection("assets")
                 .orderBy("timestamp", Query.Direction.DESCENDING)

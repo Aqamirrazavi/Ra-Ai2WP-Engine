@@ -1,0 +1,235 @@
+{
+  "projectName": "Sedrazavi Architecture",
+  "projectSlug": "sedrazavi-architecture",
+  "version": "1.0.0",
+  "createdAt": "2026-09-30T12:16:34.247Z",
+  "manifestHash": "29569f9689f5bcd394f4bc866825cafd423111cfef0af79b565f8bf03c33e1fb",
+  "routes": [
+    {
+      "path": "#about",
+      "componentName": "App",
+      "pageTitle": "استودیو",
+      "isIndex": false
+    },
+    {
+      "path": "#projects",
+      "componentName": "App",
+      "pageTitle": "پروژه‌ها",
+      "isIndex": false
+    },
+    {
+      "path": "#philosophy",
+      "componentName": "App",
+      "pageTitle": "مانیفست معماری",
+      "isIndex": false
+    },
+    {
+      "path": "#contact",
+      "componentName": "App",
+      "pageTitle": "ارتباط",
+      "isIndex": false
+    }
+  ],
+  "contentSections": [
+    {
+      "id": "section_app",
+      "sectionTitle": "بخش App",
+      "fields": [
+        {
+          "key": "hero_heading_1",
+          "label": "عنوان اصلی بخش هیرو",
+          "type": "text",
+          "defaultValue": "آفرینش فضاهای اصیل و لوکس در نقطه پیوند هنر و اقلیم"
+        },
+        {
+          "key": "sub_heading_1",
+          "label": "عنوان بخش ثانویه",
+          "type": "text",
+          "defaultValue": "منتخب آثار و پروژه‌های شاخص"
+        },
+        {
+          "key": "paragraph_text_1",
+          "label": "متن توضیحات",
+          "type": "textarea",
+          "defaultValue": "طراحی مهندسی‌شده با بالاترین استانداردهای جهانی برای کسانی که معماری را به عنوان اثر هنری پایدار می‌شناسند."
+        },
+        {
+          "key": "paragraph_text_2",
+          "label": "متن توضیحات",
+          "type": "textarea",
+          "defaultValue": "{p.location}"
+        },
+        {
+          "key": "badge_1",
+          "label": "نشان و بج تگ",
+          "type": "badge",
+          "defaultValue": "SEDRAZAVI ARCHITECTURE"
+        },
+        {
+          "key": "badge_2",
+          "label": "نشان و بج تگ",
+          "type": "badge",
+          "defaultValue": "LUXURY ARCHITECTURAL ATELIER"
+        },
+        {
+          "key": "badge_3",
+          "label": "نشان و بج تگ",
+          "type": "badge",
+          "defaultValue": "SELECTED WORKS"
+        },
+        {
+          "key": "badge_4",
+          "label": "نشان و بج تگ",
+          "type": "badge",
+          "defaultValue": "{p.category}"
+        },
+        {
+          "key": "badge_5",
+          "label": "نشان و بج تگ",
+          "type": "badge",
+          "defaultValue": "{p.year}"
+        },
+        {
+          "key": "cta_button_1",
+          "label": "برچسب دکمه اقدام (CTA)",
+          "type": "button",
+          "defaultValue": "رزرو جلسه مشاوره"
+        },
+        {
+          "key": "stat_number_1",
+          "label": "آمار عددی 1",
+          "type": "stat_number",
+          "defaultValue": "۲۸+"
+        },
+        {
+          "key": "stat_label_1",
+          "label": "برچسب آمار 1",
+          "type": "stat_label",
+          "defaultValue": "پروژه لوکس اجرا شده"
+        },
+        {
+          "key": "stat_number_2",
+          "label": "آمار عددی 2",
+          "type": "stat_number",
+          "defaultValue": "۷"
+        },
+        {
+          "key": "stat_label_2",
+          "label": "برچسب آمار 2",
+          "type": "stat_label",
+          "defaultValue": "جایزه بین‌المللی طراحی"
+        },
+        {
+          "key": "stat_number_3",
+          "label": "آمار عددی 3",
+          "type": "stat_number",
+          "defaultValue": "۱۰۰٪"
+        },
+        {
+          "key": "stat_label_3",
+          "label": "برچسب آمار 3",
+          "type": "stat_label",
+          "defaultValue": "رضایت کارفرمایان خصوصی"
+        },
+        {
+          "key": "initial_items_repeater",
+          "label": "لیست داده‌های پیش‌فرض پروژه",
+          "type": "repeater",
+          "defaultValue": [
+            {
+              "id": 1,
+              "title": "ویلای صخره‌ای لواسان",
+              "category": "مسکونی لوکس",
+              "year": "۱۴۰۲",
+              "location": "تهران، لواسان"
+            },
+            {
+              "id": 2,
+              "title": "برج اداری هزاره تجریش",
+              "category": "تجاری پایدار",
+              "year": "۱۴۰۱",
+              "location": "تهران، تجریش"
+            },
+            {
+              "id": 3,
+              "title": "مجموعه اقامتی اکولوژیک کویر",
+              "category": "گردشگری بیوفیلیک",
+              "year": "۱۴۰۳",
+              "location": "یزد"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "designTokens": {
+    "colors": [
+      {
+        "slug": "color-1",
+        "name": "Token #0B132B",
+        "hex": "#0B132B",
+        "role": "background"
+      },
+      {
+        "slug": "color-2",
+        "name": "Token #E0E1DD",
+        "hex": "#E0E1DD",
+        "role": "primary"
+      },
+      {
+        "slug": "color-3",
+        "name": "Token #5BC0BE",
+        "hex": "#5BC0BE",
+        "role": "primary"
+      },
+      {
+        "slug": "color-4",
+        "name": "Token #1C2541",
+        "hex": "#1C2541",
+        "role": "background"
+      },
+      {
+        "slug": "color-5",
+        "name": "Token #8D99AE",
+        "hex": "#8D99AE",
+        "role": "primary"
+      },
+      {
+        "slug": "color-6",
+        "name": "Token #6FFFE9",
+        "hex": "#6FFFE9",
+        "role": "primary"
+      },
+      {
+        "slug": "color-7",
+        "name": "Token #3A506B",
+        "hex": "#3A506B",
+        "role": "background"
+      }
+    ],
+    "arbitraryHexFound": [
+      "#0B132B",
+      "#E0E1DD",
+      "#5BC0BE",
+      "#1C2541",
+      "#8D99AE",
+      "#6FFFE9",
+      "#3A506B"
+    ],
+    "fonts": {
+      "bodyFont": "system-ui, -apple-system, \"Segoe UI\", Roboto, sans-serif",
+      "headingFont": "inherit"
+    }
+  },
+  "apiEndpoints": [
+    {
+      "rawUrl": "/wp-json/sedrazavi/v1/projects",
+      "cleanRoute": "/sedrazavi/v1/projects",
+      "namespace": "sedrazavi/v1",
+      "endpoint": "/projects",
+      "method": "GET",
+      "callerComponent": "App",
+      "lineSnippet": "fetch('/wp-json/sedrazavi/v1/projects')"
+    }
+  ]
+}

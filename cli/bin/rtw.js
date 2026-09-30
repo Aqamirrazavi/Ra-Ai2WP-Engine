@@ -1,59 +1,91 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
+import * as fs from 'fs';
+import * as path from 'path';
+import * as os from 'os';
+import { execSync } from 'child_process';
+import { fileURLToPath } from 'url';
+import { RTWCompilerEngine, OutputType } from '../../core-engine/src/index.ts';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 function printUsage() {
   console.log(`
-⚡ RTW Converter CLI - React to WordPress Universal Transpiler
-Version: 1.1.0
+⚡ RTW Converter CLI — React to WordPress Universal Transpiler
+Version: 1.3.0 (Phases 1, 2 & 3 Certified)
 
 Usage:
-  npx rtw-convert <source-file-or-dir-or-archive> [options]
+  npx rtw-convert <source-file-or-dir-or-git-url-or-zip> [options]
 
 Inputs Supported:
-  - Single React File:      ./src/App.tsx, ./components/Navbar.jsx
+  - Git Repositories:       https://github.com/owner/repo.git, git@github.com:...
+  - Compressed Archives:    ./archive.zip, ./archive.tar.gz
   - Directory of React:     ./src, ./my-react-app
-  - Compressed Archive:     ./archive.zip, ./archive.tar.gz
+  - Single React File:      ./src/App.tsx, ./components/Navbar.jsx
 
 Options:
-  -t, --type <type>        classic-theme | block-theme | plugin | block | single-template (default: block-theme)
+  -t, --type <type>        classic-theme | block-theme | plugin | block (default: block-theme)
   -n, --name <name>        Theme/Plugin name (default: "RTW Component")
+  -b, --branch <branch>    Git branch to clone (optional)
   -o, --out <path>         Output directory path (default: "./build/wordpress")
-  -z, --zip <path>         Output as installable WordPress ZIP file
-  --rtl                    Generate RTL stylesheet (default: true)
+  -z, --zip <path>         Output installable WordPress ZIP file
+  --no-rtl                 Disable RTL styling
   --help, -h               Show this help message
 
 Examples:
-  npx rtw-convert ./src --type block-theme --name "My Modern FSE Theme"
-  npx rtw-convert ./react-code.zip --type plugin --name "Commerce Bridge"
-  npx rtw-convert ./App.tsx --type block-theme --zip ./dist/my-theme.zip
+  npx rtw-convert https://github.com/vercel/next.js --type block-theme --name "NextWP"
+  npx rtw-convert ./react-portfolio --type classic-theme --name "Modern Portfolio" --zip
+  npx rtw-convert ./contact-form.zip --type plugin --name "Interactive Contact"
+  npx rtw-convert ./src/ProductCard.tsx --type block --name "Product Card"
 `);
 }
 
-function scanFilesRecursively(dir, extensions = ['.jsx', '.tsx', '.js', '.ts', '.css', '.json']) {
-  let results = [];
-  if (!fs.existsSync(dir)) return results;
-  const list = fs.readdirSync(dir);
-  for (const file of list) {
-    const filePath = path.join(dir, file);
-    const stat = fs.statSync(filePath);
-    if (stat && stat.isDirectory()) {
-      if (!file.includes('node_modules') && !file.includes('.git') && !file.includes('.next')) {
-        results = results.concat(scanFilesRecursively(filePath, extensions));
+function scanFilesRecursively(dir, baseDir = dir) {
+  const result = {};
+  if (!fs.existsSync(dir)) return result;
+
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      if (['node_modules', '.git', '.next', 'dist', 'build', '.cache'].includes(entry.name)) {
+        continue;
       }
+      Object.assign(result, scanFilesRecursively(fullPath, baseDir));
     } else {
-      const ext = path.extname(file).toLowerCase();
-      if (extensions.includes(ext)) {
-        results.push(filePath);
+      const ext = path.extname(entry.name).toLowerCase();
+      if (['.jsx', '.tsx', '.js', '.ts', '.css', '.json', '.html'].includes(ext)) {
+        const relPath = path.relative(baseDir, fullPath).replace(/\\/g, '/');
+        // Prevent path traversal
+        if (!relPath.startsWith('..')) {
+          result[relPath] = fs.readFileSync(fullPath, 'utf8');
+        }
       }
     }
   }
-  return results;
+  return result;
 }
 
-async function run() {
+function mapOutputType(typeStr) {
+  switch ((typeStr || '').toLowerCase()) {
+    case 'classic-theme':
+    case 'classic':
+      return OutputType.CLASSIC_THEME;
+    case 'plugin':
+    case 'wp-plugin':
+      return OutputType.WP_PLUGIN;
+    case 'block':
+    case 'gutenberg-block':
+      return OutputType.GUTENBERG_BLOCK;
+    case 'block-theme':
+    case 'fse':
+    default:
+      return OutputType.BLOCK_THEME;
+  }
+}
+
+async function main() {
   const args = process.argv.slice(2);
   if (args.length === 0 || args.includes('--help') || args.includes('-h')) {
     printUsage();
@@ -61,213 +93,163 @@ async function run() {
   }
 
   const inputSource = args[0];
-  let outputType = 'block-theme';
+  let outputTypeStr = 'block-theme';
   let projectName = 'RTW Component';
   let outputDir = './build/wordpress';
   let zipPath = null;
-  let rtl = true;
+  let branch = null;
+  let enableRtl = true;
 
   for (let i = 1; i < args.length; i++) {
     if ((args[i] === '-t' || args[i] === '--type') && args[i + 1]) {
-      outputType = args[++i];
+      outputTypeStr = args[++i];
     } else if ((args[i] === '-n' || args[i] === '--name') && args[i + 1]) {
       projectName = args[++i];
     } else if ((args[i] === '-o' || args[i] === '--out') && args[i + 1]) {
       outputDir = args[++i];
-    } else if ((args[i] === '-z' || args[i] === '--zip') && args[i + 1]) {
-      zipPath = args[++i];
-    } else if (args[i] === '--no-rtl') {
-      rtl = false;
-    }
-  }
-
-  console.log(`\n🚀 Initializing RTW Transpiler for: '${inputSource}' [Mode: ${outputType}]...`);
-
-  let workDir = inputSource;
-
-  // 1. If input is a ZIP or Archive, extract it first
-  if (fs.existsSync(inputSource) && (inputSource.endsWith('.zip') || inputSource.endsWith('.tar.gz') || inputSource.endsWith('.bin'))) {
-    const tempExtractDir = path.resolve(process.cwd(), '.rtw_extracted_temp');
-    console.log(`📦 Archive detected. Extracting to temporary directory...`);
-    if (fs.existsSync(tempExtractDir)) {
-      fs.rmSync(tempExtractDir, { recursive: true, force: true });
-    }
-    fs.mkdirSync(tempExtractDir, { recursive: true });
-
-    try {
-      if (inputSource.endsWith('.zip')) {
-        execSync(`unzip -q "${inputSource}" -d "${tempExtractDir}"`);
+    } else if ((args[i] === '-z' || args[i] === '--zip')) {
+      if (args[i + 1] && !args[i + 1].startsWith('-')) {
+        zipPath = args[++i];
       } else {
-        execSync(`tar -xzf "${inputSource}" -C "${tempExtractDir}"`);
+        zipPath = true; // flag present
       }
-      workDir = tempExtractDir;
-      console.log(`✓ Archive successfully extracted.`);
-    } catch (e) {
-      console.warn(`⚠️ Native extraction failed (${e.message}), continuing with direct scan.`);
+    } else if ((args[i] === '-b' || args[i] === '--branch') && args[i + 1]) {
+      branch = args[++i];
+    } else if (args[i] === '--no-rtl') {
+      enableRtl = false;
     }
   }
 
-  // 2. Discover React components
-  let componentFiles = [];
-  if (fs.existsSync(workDir)) {
-    const stat = fs.statSync(workDir);
-    if (stat.isDirectory()) {
-      componentFiles = scanFilesRecursively(workDir);
-      console.log(`🔍 Discovered ${componentFiles.length} React / TypeScript components in directory.`);
+  const targetOutputType = mapOutputType(outputTypeStr);
+
+  console.log(`\n======================================================`);
+  console.log(`⚡ RTW Converter — React to WordPress Universal Suite`);
+  console.log(`======================================================`);
+  console.log(`📍 Input Source: ${inputSource}`);
+  console.log(`🎯 Output Format: ${targetOutputType}`);
+  console.log(`🏷️  Project Name:  ${projectName}`);
+  console.log(`------------------------------------------------------`);
+
+  let tempDir = null;
+  let sourceFiles = {};
+
+  try {
+    // 1. Ingestion: Git URL, Archive, Directory, or Single File
+    const isGitUrl = inputSource.startsWith('http://') || inputSource.startsWith('https://') || inputSource.startsWith('git@') || inputSource.endsWith('.git');
+    const isArchive = inputSource.endsWith('.zip') || inputSource.endsWith('.tar.gz');
+
+    if (isGitUrl) {
+      tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rtw_git_'));
+      console.log(`\n[STEP 1/3: INGESTION] Cloning Git repository...`);
+      const branchArg = branch ? `--branch "${branch}"` : '';
+      execSync(`git clone --depth 1 ${branchArg} "${inputSource}" "${tempDir}"`, { stdio: 'inherit' });
+      sourceFiles = scanFilesRecursively(tempDir);
+    } else if (isArchive && fs.existsSync(inputSource)) {
+      tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rtw_archive_'));
+      console.log(`\n[STEP 1/3: INGESTION] Unpacking archive...`);
+      if (inputSource.endsWith('.zip')) {
+        execSync(`unzip -q "${inputSource}" -d "${tempDir}"`);
+      } else {
+        execSync(`tar -xzf "${inputSource}" -C "${tempDir}"`);
+      }
+      sourceFiles = scanFilesRecursively(tempDir);
+    } else if (fs.existsSync(inputSource)) {
+      console.log(`\n[STEP 1/3: INGESTION] Scanning local source path...`);
+      const stat = fs.statSync(inputSource);
+      if (stat.isDirectory()) {
+        sourceFiles = scanFilesRecursively(inputSource);
+      } else {
+        sourceFiles[path.basename(inputSource)] = fs.readFileSync(inputSource, 'utf8');
+      }
     } else {
-      componentFiles = [workDir];
-      console.log(`🔍 Loaded single component: ${path.basename(workDir)}`);
+      console.error(`❌ Error: Source input "${inputSource}" not found or invalid.`);
+      process.exit(1);
     }
-  } else {
-    console.log(`ℹ️ Input source '${inputSource}' not found; synthesizing boilerplate component tree for '${projectName}'...`);
-  }
 
-  // 3. Generate WordPress Assets
-  const slug = projectName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-  const targetDir = path.resolve(process.cwd(), outputDir);
-  if (!fs.existsSync(targetDir)) {
-    fs.mkdirSync(targetDir, { recursive: true });
-  }
+    const fileCount = Object.keys(sourceFiles).length;
+    console.log(`✓ Loaded ${fileCount} source files for processing.`);
 
-  console.log(`📁 Writing WordPress Suite to: ${targetDir}`);
+    // 2. Compilation & AST Analysis via RTWCompilerEngine
+    console.log(`\n[STEP 2/3: AST ANALYSIS & TRANSPILATION] Analyzing components, hooks & state...`);
+    const result = await RTWCompilerEngine.convert({
+      projectName,
+      sourceFiles,
+      outputType: targetOutputType,
+      enableRtl
+    });
 
-  if (outputType === 'plugin') {
-    fs.writeFileSync(path.join(targetDir, `${slug}.php`), `<?php
-/**
- * Plugin Name: ${projectName}
- * Description: Generated from React component suite via RTW Converter.
- * Version: 1.0.0
- * Author: RTW Universal Transpiler
- * Text Domain: ${slug}
- */
+    console.log(`  - Stack Detected: ${result.report.stackNameFa} (${result.report.detectedStack})`);
+    console.log(`  - Components Identified: ${result.report.components.length}`);
+    console.log(`  - React Hooks Mapped:    ${result.report.hooks.length}`);
+    console.log(`  - Form Actions Handled:  ${result.report.forms.length}`);
 
-if (!defined('ABSPATH')) exit;
+    // 3. Verification & Self-Healing Gates
+    console.log(`\n[STEP 3/3: VERIFICATION & SELF-HEALING GATES]`);
+    const { verification } = result;
 
-define('RTW_${slug.toUpperCase().replace(/-/g, '_')}_VERSION', '1.0.0');
-
-add_action('rest_api_init', function() {
-    register_rest_route('rtw/v1', '/${slug}/data', [
-        'methods' => 'GET',
-        'callback' => function() {
-            return rest_ensure_response([
-                'status' => 'success',
-                'components_mapped' => ${componentFiles.length || 1},
-                'timestamp' => current_time('mysql')
-            ]);
-        },
-        'permission_callback' => '__return_true'
-    ]);
-});
-`);
-    console.log(`  ✓ ${slug}.php (WordPress Plugin Base)`);
-
-    fs.writeFileSync(path.join(targetDir, 'README.txt'), `=== ${projectName} ===
-Contributors: rtwconverter
-Requires at least: 6.2
-Tested up to: 6.7
-Stable tag: 1.0.0
-License: GPLv2 or later
-
-== Description ==
-Native WordPress Plugin generated from React Component Tree.
-`);
-    console.log(`  ✓ README.txt`);
-
-  } else {
-    // Generate Block Theme v3 (FSE)
-    const templatesDir = path.join(targetDir, 'templates');
-    const partsDir = path.join(targetDir, 'parts');
-    fs.mkdirSync(templatesDir, { recursive: true });
-    fs.mkdirSync(partsDir, { recursive: true });
-
-    fs.writeFileSync(path.join(targetDir, 'theme.json'), JSON.stringify({
-      "$schema": "https://schemas.wp.org/trunk/theme.json",
-      "version": 3,
-      "settings": {
-        "appearanceTools": true,
-        "layout": { "contentSize": "840px", "wideSize": "1200px" },
-        "color": {
-          "palette": [
-            { "slug": "primary", "color": "#2563EB", "name": "Primary Blue" },
-            { "slug": "dark", "color": "#0F172A", "name": "Slate Dark" }
-          ]
-        }
-      },
-      "styles": {
-        "color": { "background": "#F8FAFC", "text": "#0F172A" }
+    if (verification.selfHealedIssues.length > 0) {
+      console.log(`  🩹 Self-Healing Actions Applied (${verification.selfHealedIssues.length}):`);
+      for (const issue of verification.selfHealedIssues) {
+        console.log(`     ✓ ${issue}`);
       }
-    }, null, 2));
-    console.log(`  ✓ theme.json (FSE Version 3)`);
+    }
 
-    fs.writeFileSync(path.join(targetDir, 'style.css'), `/*
-Theme Name: ${projectName}
-Theme URI: https://github.com/rtw-converter/${slug}
-Author: RTW Universal Transpiler
-Description: Modern WordPress FSE Theme transpiled from ${componentFiles.length} React components.
-Version: 1.0.0
-Requires at least: 6.7
-Text Domain: ${slug}
-*/
-body { margin: 0; font-family: system-ui, -apple-system, sans-serif; }
-`);
-    console.log(`  ✓ style.css`);
+    console.log(`  - Syntax Errors:     ${verification.syntaxErrors.length === 0 ? '✅ 0 PHP Errors' : `❌ ${verification.syntaxErrors.length} Errors`}`);
+    console.log(`  - Security & Guard:  ${verification.integrityIssues.length === 0 ? '✅ 100% Function & Class Isolation' : '❌ Issues found'}`);
+    console.log(`  - Runtime Sandbox:   ${verification.runtimeSandboxPassed ? '✅ Passed (No WSOD, valid output)' : '❌ Execution failed'}`);
 
-    fs.writeFileSync(path.join(targetDir, 'functions.php'), `<?php
-/**
- * Theme Setup & Scripts
- */
-if (!defined('ABSPATH')) exit;
+    if (!result.success) {
+      console.error(`\n❌ Compilation stopped by Quality Gate:`);
+      console.error(`   ${verification.userFriendlyMessageFa}`);
+      if (verification.syntaxErrors.length > 0) {
+        console.error('Syntax Details:', verification.syntaxErrors);
+      }
+      process.exit(1);
+    }
 
-add_action('after_setup_theme', function() {
-    add_theme_support('wp-block-styles');
-    add_theme_support('editor-styles');
-});
-`);
-    console.log(`  ✓ functions.php`);
+    // 4. Writing Output Files
+    const targetDir = path.resolve(process.cwd(), outputDir);
+    fs.mkdirSync(targetDir, { recursive: true });
 
-    fs.writeFileSync(path.join(templatesDir, 'index.html'), `<!-- wp:template-part {"slug":"header","tagName":"header"} /-->
-<!-- wp:group {"tagName":"main","layout":{"type":"constrained"}} -->
-<main class="wp-block-group">
-    <!-- wp:post-title {"level":1} /-->
-    <!-- wp:post-content /-->
-</main>
-<!-- /wp:group -->
-<!-- wp:template-part {"slug":"footer","tagName":"footer"} /-->`);
-    console.log(`  ✓ templates/index.html`);
+    for (const file of result.files) {
+      const destPath = path.join(targetDir, file.filePath);
+      fs.mkdirSync(path.dirname(destPath), { recursive: true });
+      if (file.language === 'binary') {
+        fs.writeFileSync(destPath, Buffer.from(file.content, 'base64'));
+      } else {
+        fs.writeFileSync(destPath, file.content, 'utf8');
+      }
+    }
 
-    fs.writeFileSync(path.join(partsDir, 'header.html'), `<!-- wp:group {"layout":{"type":"flex","justifyContent":"space-between"}} -->
-<div class="wp-block-group">
-    <!-- wp:site-title /-->
-    <!-- wp:navigation /-->
-</div>
-<!-- /wp:group -->`);
-    console.log(`  ✓ parts/header.html`);
+    console.log(`\n📁 Generated ${result.files.length} production files in: ${targetDir}`);
 
-    fs.writeFileSync(path.join(partsDir, 'footer.html'), `<!-- wp:paragraph {"align":"center"} -->
-<p class="has-text-align-center">© ${new Date().getFullYear()} ${projectName}. Transpiled with RTW Converter.</p>
-<!-- /wp:paragraph -->`);
-    console.log(`  ✓ parts/footer.html`);
+    // 5. Creating ZIP Archive if requested
+    if (zipPath) {
+      const finalZipName = typeof zipPath === 'string' ? zipPath : `${result.report.projectSlug || 'wordpress-package'}.zip`;
+      const finalZipPath = path.resolve(process.cwd(), finalZipName);
 
-    if (rtl) {
-      fs.writeFileSync(path.join(targetDir, 'rtl.css'), `/* Persian & Arabic RTL Support */
-body { direction: rtl; unicode-bidi: embed; }
-`);
-      console.log(`  ✓ rtl.css (Right-to-Left styling)`);
+      try {
+        execSync(`cd "${targetDir}" && zip -rq "${finalZipPath}" ./*`);
+        console.log(`📦 WordPress Installable ZIP ready: ${finalZipPath}`);
+      } catch {
+        console.log(`ℹ️ To package as zip manually, run: cd "${targetDir}" && zip -r package.zip ./*`);
+      }
+    }
+
+    console.log(`\n======================================================`);
+    console.log(`🎉 100% SUCCESS: ${verification.userFriendlyMessageFa}`);
+    console.log(`======================================================\n`);
+
+  } finally {
+    if (tempDir && fs.existsSync(tempDir)) {
+      try {
+        fs.rmSync(tempDir, { recursive: true, force: true });
+      } catch {}
     }
   }
-
-  // 4. Zip output if requested
-  if (zipPath) {
-    try {
-      const resolvedZip = path.resolve(process.cwd(), zipPath);
-      execSync(`cd "${targetDir}" && zip -r "${resolvedZip}" ./*`);
-      console.log(`\n📦 Successfully bundled into ZIP: ${resolvedZip}`);
-    } catch (e) {
-      console.log(`\nℹ️ Note: run 'zip -r ${zipPath} ${outputDir}/*' to package locally.`);
-    }
-  }
-
-  console.log(`\n✨ Conversion complete! Production WordPress assets ready.`);
 }
 
-run();
+main().catch(err => {
+  console.error('\n❌ Uncaught Fatal Error:', err.message);
+  process.exit(1);
+});

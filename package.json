@@ -1,0 +1,22 @@
+{
+  "name": "rtw-universal-suite",
+  "version": "1.1.0",
+  "private": true,
+  "type": "module",
+  "description": "RTW Converter - Universal React to WordPress Compiler Monorepo",
+  "scripts": {
+    "test:fixtures": "node --experimental-strip-types tests/runner/fixtureRunner.ts",
+    "test:phase2": "node --experimental-strip-types tests/runner/phase2Runner.ts",
+    "test:all": "npm run test:fixtures && npm run test:phase2",
+    "test": "npm run test:all"
+  },
+  "workspaces": [
+    "core-engine",
+    "cli"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "author": "RTW Core Team",
+  "license": "MIT"
+}

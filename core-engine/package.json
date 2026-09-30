@@ -1,12 +1,14 @@
 {
   "name": "@rtw/core-engine",
   "version": "1.0.0",
+  "type": "module",
   "description": "Core Transpiler and Gemini AI Engine for React to WordPress Conversion",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "test": "node dist/index.js"
+    "test": "node --experimental-strip-types src/index.ts",
+    "test:fixtures": "node --experimental-strip-types ../tests/runner/fixtureRunner.ts"
   },
   "keywords": [
     "react",

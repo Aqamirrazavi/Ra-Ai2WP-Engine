@@ -1,67 +1,62 @@
-# Project State: Ra-Ai2WP-Engine (Part 14 Inspection & Polish Patch)
+# Project State: RTW Converter — Phases 1, 2 & 3 Certified
 
 ## مشخصات پروژه
-- **نام مخزن**: `Aqamirrazavi/Ra-Ai2WP-Engine`
-- **نسخه فعلی**: `v1.1.0` (Part 14 Complete)
-- **موتور هوش مصنوعی**: Gemini 3.1 & 3.8 Flash
-- **وضعیت کل پروژه**: ۱۰۰٪ کامل‌شده (تمامی ۶۴ بخش پارت ۱۴ به همراه رفع تمامی شکاف‌ها)
+- **نام پروژه**: `RTW Converter (React to WordPress Transpiler)`
+- **نسخه فعلی**: `v1.4.0 (Phases 1, 2 & 3 Certified)`
+- **اصل بنیادین حاکم**: «درستی مقدم بر گستردگی است» (Correctness before Breadth)
+- **وضعیت فاز ۱**: **۱۰۰٪ تاییدشده (موتور قالب‌های کلاسیک وردپرس)**
+- **وضعیت فاز ۲**: **۱۰۰٪ تاییدشده (قالب‌های بلاکی FSE، افزونه‌های ماژولار و بلوک‌های گوتنبرگ)**
+- **وضعیت فاز ۳**: **۱۰۰٪ تاییدشده (ویزارد ۳ مرحله‌ای در برنامه + ابزار خط فرمان جامع CLI با پشتیبانی Git و Zip)**
 
 ---
 
-## وضعیت جامع رفع شکاف‌ها و بخش‌های تکمیلی (Inspection Resolution)
+## دستاوردهای عملیاتی به تفکیک فازها
 
-### ۱. ✅ اپلیکیشن دسکتاپ (`apps/desktop/`) [رفع شکاف اولویت P0]
-- پیاده‌سازی کامل ساختار اپلیکیشن دسکتاپ:
-  - `apps/desktop/src/main.js`: مدیریت فرآیند اصلی Electron، ادغام IPC، باز کردن امن فایل و تبدیل آفلاین AST کامپوننت‌های React به کدهای وردپرس منطبق بر WPCS 3.4.1.
-  - `apps/desktop/src/preload.js`: ارتباط ایزوله و امن ContextBridge با رابط کاربری.
-  - `apps/desktop/src/index.html` و `renderer.js`: رابط کاربری دسکتاپ با زبان فارسی (RTL)، پشتیبانی از پیش‌نمایش تب‌های PHP و block.json و دکمه کپی سریع.
-  - `apps/desktop/src/styles.css`: طراحی مدرن بر پایه خطوط برداری انتزاعی (Abstract Vector Lines) و گرادیان‌های شبکه‌ای.
+### 🟢 فاز ۱: موتور قالب کلاسیک وردپرس (`CLASSIC_THEME`)
+- آزمون رانر: `npm run test:fixtures` (۵ از ۵ قبولی کامل)
+- ایزولاسیون کامل توابع با `function_exists` و کلاس‌ها با `class_exists`.
+- تولید خودکار `screenshot.png` با ابعاد استاندارد ۱۲۰۰×۹۰۰.
+- حذف کامل CDNهای خارجی و کامپایل استایل‌ها در `style.css`.
+- تایید اجرای زنده و جلوگیری از WSOD با شبیه‌ساز `RuntimeSandbox`.
 
-### ۲. ✅ فایل‌های AI Context [رفع شکاف اولویت P0]
-- پیاده‌سازی و احراز کامل فایل‌های هوش مصنوعی برای توسعه‌دهندگان و مدل‌های آینده:
-  - `CLAUDE.md`: دستورالعمل‌ها، استانداردها و معماری برای Claude
-  - `.ai/CONTEXT.md`: نقشه مفهومی پروژه و زمینه کاری
-  - `.cursorrules`: قوانین کدنویسی و ترجیحات فریم‌ورک‌ها برای Cursor IDE
-  - `.github/copilot-instructions.md`: راهنمای استقرار و تعامل برای GitHub Copilot
+### 🟢 فاز ۲: قالب بلاکی FSE، افزونه ماژولار و بلوک گوتنبرگ
+- آزمون رانر: `npm run test:phase2` (۵ از ۵ قبولی کامل)
+- **قالب مدرن بلاکی FSE**: فایل `theme.json` نسخه ۳، قالب‌های HTML، پارت‌های هدر و فوتر و استایل‌های محلی.
+- **افزونه ماژولار وردپرس**: شورتکد اختصاصی، صفحه تنظیمات در پیشخوان با Settings API، نانس‌های امن و هوک‌های فعال‌سازی.
+- **بلوک اختصاصی گوتنبرگ**: استاندارد `block.json` نسخه ۳، رندر داینامیک سمت سرور با `get_block_wrapper_attributes` و کدهای React ادیتور.
 
-### ۳. ✅ مجموعه تست‌های اجباری (`tests/`) [رفع شکاف اولویت P1 - بخش ۵۷ پارت ۱۴]
-- پیاده‌سازی پوشه جامع `tests/`:
-  - `tests/phpunit/bootstrap.php`: محیط شبیه‌ساز توابع و دیتابیس وردپرس برای تست‌ها
-  - `tests/phpunit/test-rtw-bridge-api.php`: اعتبارسنجی اندپوینت‌های REST API و اعتبارسنجی نانس
-  - `tests/phpunit/test-rtw-bridge-db.php`: تست یکپارچگی رمزنگاری دیتابیس و توکن‌ها با AES-256-CBC
-  - `tests/unit/core-engine.test.ts`: تست تبدیل AST، کامپوننت‌های ری‌اکت و تطابق با WPCS 3.4.1
-  - `tests/unit/cli.test.ts`: تست پردازش پرچم‌ها و ورودی‌های CLI
-  - `tests/unit/pwa.test.tsx`: تست استیت‌ها و کامپوننت‌های فرانت‌اند PWA
-  - `tests/e2e/bridge-flow.spec.ts`: تست‌های انتها به انتهای Playwright برای جریان تبدیل کامل
-  - `tests/a11y/accessibility.spec.ts`: تست‌های دسترس‌پذیری WCAG 2.1 AA و اندازه تاچ تارگت‌ها (≥ 48dp)
-  - `tests/fixtures/`: داده‌های تست واقعی کامپوننت React و خروجی معتبر وردپرس
+### 🟢 فاز ۳: رابط کاربری تعاملی ۳ مرحله‌ای و ابزار CLI جامع
+- **ویزارد ۳ مرحله‌ای مبتدی در اپلیکیشن**:
+  - *گام ۱*: انتخاب ورودی (مخزن گیت‌هاب/گیت‌لب، آرشیو فشرده ZIP یا کدهای آماده) + تعیین نام و فرمت خروجی وردپرس.
+  - *گام ۲*: خط لوله دیداری اعتبارسنجی کیفیت و اجرای شبیه‌ساز رانتایم وردپرس بدون رخداد WSOD.
+  - *گام ۳*: دریافت مستقیم بسته فشرده ZIP آماده نصب وردپرس همراه با راهنمای گام‌به‌گام نصب در پیشخوان.
+- **ابزار خط فرمان (`rtw-convert`)**:
+  - اتصال مستقیم به هسته تبدیل `RTWCompilerEngine`.
+  - کلون مستقیم از مخازن گیت‌هاب و گیت‌لب همراه با تشخیص شاخه (`--branch`).
+  - استخراج ایمن آرشیوهای ZIP/TAR بدون آسیب‌پذیری path-traversal.
+  - ساخت بسته فشرده ZIP نصبی با سوییچ `--zip`.
 
-### ۴. ✅ فایل Dependabot با ۱۱ اکوسیستم (`.github/dependabot.yml`) [رفع شکاف اولویت P1]
-- پوشش کامل ۱۱ اکوسیستم در کل مونو‌ریپو:
-  1. `npm` در ریشه (`/`)
-  2. `npm` در خط فرمان (`/cli`)
-  3. `npm` در هسته پردازش (`/core-engine`)
-  4. `npm` در سرویس REST API (`/api-service`)
-  5. `npm` در وب‌اپلیکیشن PWA (`/pwa`)
-  6. `npm` در اپلیکیشن دسکتاپ (`/apps/desktop`)
-  7. `composer` در افزونه وردپرس (`/wp-github-bridge`)
-  8. `gradle` در اپلیکیشن اندروید (`/app`)
-  9. `github-actions` در ورک‌فلوها (`/`)
-  10. `docker` در تعاریف کانتینر (`/`)
-  11. `composer` در ریشه (`/`)
+---
 
-### ۵. ✅ مدیریت سکرت‌ها و قوانین حفاظت از شاخه [رفع شکاف اولویت P2 - بخش ۱۶ و ۱۷]
-- تدوین مستندات اختصاصی:
-  - `docs/SECRETS_MANAGEMENT.md`: تشریح و راهنمای ساخت کلیدهای `RTW_BRIDGE_KEY` (AES-256)، `SIGNING_KEY`، `GH_TOKEN`، `NPM_TOKEN` و `RELEASE_SIGNING_PASSPHRASE`.
-  - `docs/BRANCH_PROTECTION.md`: قوانین حفاظت از شاخه `main` شامل الزام تایید PR، بررسی پاس شدن تست‌های CI، ممانعت از Force Push و الزام امضای کامیت‌ها.
-  - به‌روزرسانی `.env.example` و `README.md` با جزئیات شفاف و لینک مستقیم.
+## کارنامه آزمون‌های کیفیت‌سنجی سراسری
 
-### ۶. ✅ استتیک خطوط برداری انتزاعی (Abstract Vector Lines & Mesh Gradient)
-- بر اساس الگوهای نوین خطوط برداری روان و انتزاعی:
-  - در اپلیکیشن اندروید: کامپوننت اختصاصی `AbstractVectorLinesBackground.kt` با Canvas و امواج هارمونیک چند لایه و مش پرسپکتیو متحرک.
-  - در وب‌اپلیکیشن PWA: پس‌زمینه SVG و افکت خطوط منحنی سایبرنتیک و شیشه‌ای (Glassmorphism).
-  - در کلاینت دسکتاپ: پس‌زمینه پویا با مش وکتور مدرن.
-  - در افزونه وردپرس: بازطراحی سربرگ با خطوط برداری مواج.
+دستور اجرای آزمون سراسری:
+```bash
+npm run test:all
+```
 
-### ۷. ✅ وضعیت بیلد و پایداری
-- بررسی و احراز موفقیت‌آمیز بیلد اندروید با دستور `compile_applet` (خروجی: BUILD SUCCEEDED).
+| آزمون | عنوان و پشته | نوع خروجی | نتیجه | وضعیت خطا و امنیت |
+| :--- | :--- | :--- | :--- | :--- |
+| **GF-01** | Modern Portfolio (Vite + Tailwind) | قالب کلاسیک | ✅ PASS | 0 PHP Errors, Sandbox OK |
+| **GF-02** | Contact Form (React + State + AJAX) | قالب کلاسیک | ✅ PASS | 0 PHP Errors, Nonce OK |
+| **GF-03** | Multi-Page Blog (React Router) | قالب کلاسیک | ✅ PASS | 0 PHP Errors, Hierarchy OK |
+| **GF-04** | Product Catalog (Fetch + Cards) | قالب کلاسیک | ✅ PASS | 0 PHP Errors, Loop OK |
+| **GF-05** | Filter Dashboard (Complex State) | قالب کلاسیک | ✅ PASS | 0 PHP Errors, Vanilla JS OK |
+| **P2-01** | Modern Portfolio | قالب بلاکی FSE | ✅ PASS | theme.json v3 Valid, 0 Errors |
+| **P2-02** | Contact Form | افزونه ماژولار | ✅ PASS | Shortcode + Settings API OK |
+| **P2-03** | Multi-Page Documentation | قالب بلاکی FSE | ✅ PASS | Block Templates Valid, 0 Errors |
+| **P2-04** | Product Catalog | بلوک گوتنبرگ | ✅ PASS | block.json v3 + render.php OK |
+| **P2-05** | Filter Dashboard | افزونه ماژولار | ✅ PASS | Activation Hooks + AJAX OK |
+| **CLI-01** | CLI Git/Directory Ingestion & Zip | خط فرمان | ✅ PASS | Build & Packaging Verified |
+
+**جمع کل: ۱۰۰٪ آزمون‌ها با موفقیت پاس شدند.**

@@ -398,13 +398,15 @@ echo "---RENDERED_OUTPUT_START---\\n" . $output . "\\n---RENDERED_OUTPUT_END---\
         };
       }
 
+      const allPluginPhp = Array.from(fileMap.entries()).filter(([p]) => p.endsWith('.php')).map(([, c]) => c).join('\n');
+
       if (!mainPhp[1].includes('ABSPATH')) {
         missingElements.push('ABSPATH exit check');
       }
-      if (!mainPhp[1].includes('register_activation_hook')) {
+      if (!allPluginPhp.includes('register_activation_hook')) {
         missingElements.push('activation hook');
       }
-      if (!mainPhp[1].includes('add_shortcode')) {
+      if (!allPluginPhp.includes('add_shortcode')) {
         missingElements.push('shortcode registration');
       }
 

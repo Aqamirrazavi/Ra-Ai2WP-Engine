@@ -9,6 +9,7 @@ import { OutputType } from './types.ts';
 import { ProjectDetector } from './ingestion/detector.ts';
 import { SymbolRegistry } from './parser/symbolRegistry.ts';
 import { AstScanner } from './parser/astScanner.ts';
+import { ManifestAnalyzer } from './parser/manifestAnalyzer.ts';
 import { ClassicThemeGenerator } from './generators/classic/classicThemeGenerator.ts';
 import { BlockThemeGenerator } from './generators/fse/blockThemeGenerator.ts';
 import { PluginGenerator } from './generators/plugin/pluginGenerator.ts';
@@ -132,15 +133,18 @@ export class RTWCompilerEngine {
         );
         break;
 
-      case OutputType.WP_PLUGIN:
+      case OutputType.WP_PLUGIN: {
+        const manifest = ManifestAnalyzer.analyzeProject(projectName, fileMap);
         files = PluginGenerator.generate(
           projectName,
           detection,
           scan,
           registry,
-          request.enableRtl !== false
+          request.enableRtl !== false,
+          manifest
         );
         break;
+      }
 
       case OutputType.GUTENBERG_BLOCK:
         files = GutenbergBlockGenerator.generate(
@@ -153,15 +157,18 @@ export class RTWCompilerEngine {
         break;
 
       case OutputType.CLASSIC_THEME:
-      default:
+      default: {
+        const manifest = ManifestAnalyzer.analyzeProject(projectName, fileMap);
         files = ClassicThemeGenerator.generate(
           projectName,
           detection,
           scan,
           registry,
-          request.enableRtl !== false
+          request.enableRtl !== false,
+          manifest
         );
         break;
+      }
     }
 
     // 5. Step 4: Automated Verification & Self-Healing Loop

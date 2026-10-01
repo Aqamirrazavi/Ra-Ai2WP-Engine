@@ -7,6 +7,9 @@
   "scripts": {
     "test:fixtures": "node --experimental-strip-types tests/runner/fixtureRunner.ts",
     "test:phase2": "node --experimental-strip-types tests/runner/phase2Runner.ts",
+    "test:phase3": "node --experimental-strip-types core-engine/tests/harness/runPhase3Harness.ts",
+    "test:phase4": "node --experimental-strip-types core-engine/tests/harness/runPhase4Harness.ts",
+    "test:phase5": "node --experimental-strip-types core-engine/tests/harness/runPhase5Harness.ts",
     "test:harness": "node --experimental-strip-types core-engine/tests/harness/runHarnessTest.ts",
     "test:manifest": "node --experimental-strip-types core-engine/tests/harness/runManifestAnalysis.ts",
     "test:all": "npm run test:fixtures && npm run test:phase2",

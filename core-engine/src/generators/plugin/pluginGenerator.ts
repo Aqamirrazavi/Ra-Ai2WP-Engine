@@ -414,6 +414,9 @@ if ( ! class_exists( '${pluginClassName}' ) ) {
             add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend_assets' ) );
             add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
 
+            // Shortcode Registration
+            add_shortcode( '${slug}', '${prefix}render_shortcode' );
+
             // AJAX Handlers
             add_action( 'wp_ajax_${ajaxAction}', array( $this, 'handle_ajax_submission' ) );
             add_action( 'wp_ajax_nopriv_${ajaxAction}', array( $this, 'handle_ajax_submission' ) );
